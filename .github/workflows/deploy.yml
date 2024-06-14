@@ -32,7 +32,7 @@ jobs:
               cosmwasm/workspace-optimizer:0.14.0
         - name: Deploy
           run: |     
-              ELYSD=./elysd
+              ELYSD= ./elysd
               NODE= ${{ env.NODE }}
               NAME= ${{ env.NAME }}
               CHAIN_ID= ${{ env.CHAIN_ID }}
