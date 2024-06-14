@@ -32,10 +32,6 @@ jobs:
               cosmwasm/workspace-optimizer:0.14.0
         - name: Deploy
           run: |     
-              ELYSD= ./elysd
-              NODE= ${{ env.NODE }}
-              NAME= ${{ env.NAME }}
-              CHAIN_ID= ${{ env.CHAIN_ID }}
               # helper functions
               extract_txhash() { awk -F 'txhash: ' '/txhash:/{print $2; exit}'; }
               extract_code_id() { awk -F 'key: code_id|value: ' '/key: code_id/ { getline; gsub(/"/, "", $2); print $2; exit }'; }
@@ -43,6 +39,12 @@ jobs:
               extract_account_number() { awk -F 'account_number: ' '/account_number:/ { gsub(/"/, "", $2); print $2 + 0; exit; }'; }
               extract_sequence() { awk -F 'sequence: ' '/sequence:/ { gsub(/"/, "", $2); print $2 + 0; exit; }'; }
               command_exists() { type "$1" &> /dev/null }
+
+              ELYSD=./elysd
+
+              NODE= ${{ env.NODE }}
+              NAME= ${{ env.NAME }}
+              CHAIN_ID= ${{ env.CHAIN_ID }}
 
               $ELYSD config keyring-backend test
               $ELYSD config node $NODE
