@@ -38,9 +38,25 @@ jobs:
               extract_contract_address() { awk -F 'key: _contract_address|value: ' '/key: _contract_address/ { getline; gsub(/"/, "", $2); print $2; exit }'; }
               extract_account_number() { awk -F 'account_number: ' '/account_number:/ { gsub(/"/, "", $2); print $2 + 0; exit; }'; }
               extract_sequence() { awk -F 'sequence: ' '/sequence:/ { gsub(/"/, "", $2); print $2 + 0; exit; }'; }
-              command_exists() { type "$1" &> /dev/null }
 
               ELYSD=./elysd
+
+              wait_for_tx() {
+                local txhash=$1
+                # loop until query tx cli does not fail
+                while ! $ELYSD q tx $txhash --node "$NODE" &> /dev/null; do
+                    echo "Waiting for the transaction $txhash to be included in a block..."
+                    sleep 0.5
+                done
+              }
+
+              exit_if_tx_is_empty() {
+                local tx=$1
+                if [[ -z "$tx" ]]; then
+                    echo "Error: there is not a txhash"
+                    exit 1
+                fi
+              }
 
               NODE= ${{ vars.NODE }}
               NAME= ${{ vars.NAME }}
@@ -51,11 +67,7 @@ jobs:
               $ELYSD config chain-id $CHAIN_ID
               $ELYSD config broadcast-mode sync
 
-              if ! command_exists $ELYSD; then
-                  echo "elysd is not installed. Please install elysd to run this script."
-                  exit 1
-              fi
-
+       
               echo "${{ secrets.PRIVATE_KEY_MALLORCA }}" > /tmp/private_key_mallorca.txt
               echo "${{ secrets.PASSPHRASE_MALLORCA }}" | $ELYSD keys import mallorca --keyring-backend test /tmp/private_key_mallorca.txt
 
