@@ -1,6 +1,10 @@
 name: Reusable workflow
 on:
   workflow_call:
+     inputs:
+       version:
+         required: true
+         type: string
 jobs:
   deploy:
       name: Deploy
@@ -23,9 +27,9 @@ jobs:
             toolchain: stable
         - name: Compile
           run: |
-              sed -i "s/^version = .*/version = \"${{env.VERSION}}"/" contracts/account-history-contract/Cargo.toml
-              sed -i "s/^version = .*/version = \"${{env.VERSION}}\"/" contracts/trade-shield-contract/Cargo.toml
-              sed -i "s/^version = .*/version = \"${{env.VERSION}}\"/" contracts/financial-snapshot-contract/Cargo.toml
+              sed -i "s/^version = .*/version = \"${{inputs.VERSION}}"/" contracts/account-history-contract/Cargo.toml
+              sed -i "s/^version = .*/version = \"${{inputs.VERSION}}\"/" contracts/trade-shield-contract/Cargo.toml
+              sed -i "s/^version = .*/version = \"${{inputs.VERSION}}\"/" contracts/financial-snapshot-contract/Cargo.toml
               cargo update
               
               docker run --rm -v "$(pwd)":/code \
