@@ -1,6 +1,27 @@
 name: deploy workflow
 on:
   workflow_call:
+    inputs:
+      node:
+        required: true
+        type: string
+      chainID:
+        required: true
+        type: string
+      from:
+        required: true
+        type: string
+      fs_contract_addrs:
+        type: string
+      ts_contract_addrs:
+        type: string
+      ah_contract_addrs:
+        type: string
+    secrets:
+        PRIVATE_KEY:
+          required: true
+        PASSPHRASE:
+          required: true
       
 jobs:
   deploy:
